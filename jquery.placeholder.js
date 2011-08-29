@@ -13,7 +13,7 @@
             this.handlePassword();
         }
         // Prevent placeholder values from submitting
-        $(input[0].form).submit(function() {
+        $(input[0].form).bind('submit.placeholder', function() {
             if (input.hasClass('placeholder') && input[0].value === input.attr('placeholder')) {
                 input[0].value = '';
             }
@@ -61,11 +61,11 @@
             // IE < 9 doesn't allow changing the type of password inputs
             if ($.browser.msie && input[0].outerHTML) {
                 var fakeHTML = $(input[0].outerHTML.replace(/type=(['"])?password\1/gi, 'type=$1text$1'));
-                this.fakePassword = fakeHTML.val(input.attr('placeholder')).addClass('placeholder').focus(function() {
+                this.fakePassword = fakeHTML.val(input.attr('placeholder')).addClass('placeholder').bind('focus.placeholder', function() {
                     input.trigger('focus');
                     $(this).hide();
                 });
-                $(input[0].form).submit(function() {
+                $(input[0].form).bind('submit.placholder', function() {
                     fakeHTML.remove();
                     input.show();
                 });
@@ -80,17 +80,17 @@
             var input = $(this);
             var placeholder = new Placeholder(input);
             placeholder.show(true);
-            input.focus(function() {
+            input.bind('focus.placeholder', function() {
                 placeholder.hide();
             });
-            input.blur(function() {
+            input.bind('blur.placeholder', function() {
                 placeholder.show(false);
             });
 
             // On page refresh, IE doesn't re-populate user input
             // until the window.onload event is fired.
             if ($.browser.msie) {
-                $(window).load(function() {
+                $(window).bind('load.placeholder', function() {
                     if (input.val()) {
                         input.removeClass("placeholder");
                     }
@@ -98,7 +98,7 @@
                 });
                 // What's even worse, the text cursor disappears
                 // when tabbing between text inputs, here's a fix
-                input.focus(function() {
+                input.bind('focus.placeholder', function() {
                     if (this.value === "") {
                         var range = this.createTextRange();
                         range.collapse(true);
